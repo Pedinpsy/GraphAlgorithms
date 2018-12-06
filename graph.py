@@ -160,14 +160,8 @@ class Graph:
 
 	def countCicles(self, target, node, cycles, pilha, visitado, punish):
 		if node == target:
-			if visitado[node] == 1:
-				#print(target)
-				for i in pilha:
-					if i.id == target:
-						cycles[i.id] += 1
-					else:
-						if punish[i.id] == 1:
-							cycles[i.id] -= 1
+			if len(pilha) > 0:
+				cycles[node] += 1
 				return True
 
 		pilha.append(self.getVertice(node))
@@ -175,8 +169,12 @@ class Graph:
 
 		for i in sorted(self.getVertice(node).adj ,key=lambda aux: int(aux.id)):
 			if visitado[i.id] == 0:
-				visitado[i.id] = 1
+				if i.id != target:
+					visitado[i.id] = 1
+				if punish[i.id] == 0:
+					continue
 				result = self.countCicles(target, i.id, cycles, copy.copy(pilha), copy.copy(visitado), punish)
+
 
 
 		pilha.pop()
@@ -225,6 +223,9 @@ class Graph:
 			self.countCicles(i, i, cycles, copy.copy(pilha), copy.copy(visited), punish)
 			punish[i] = 0
 			print(i, cycles)
+
+		#self.countCicles(2, 2, cycles, copy.copy(pilha), copy.copy(visited), punish)
+		#print(2, cycles)
 
 		c = 0
 	
