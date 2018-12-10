@@ -1,6 +1,7 @@
 from collections import deque
 import numpy as np
 import copy
+import heapq as hp
 
 class Vertice:
 	def __init__(self, id, cor = 'b'):
@@ -9,6 +10,8 @@ class Vertice:
 		self.adj = []
 		self.nivel = 0
 		self.pai = None
+		self.value = float("inf")
+		self.prev = None
 	def __str__(self):
 		return str(self.id)
 	def __repr__(self):
@@ -42,6 +45,16 @@ class Graph:
 			if i.id == a:
 				return i
 		return False
+	def getArestas(self):
+		return self.arestas
+	def getAresta(self,origem,destino):
+		for i in self.arestas:
+
+			if i.origem.id == origem and i.adj.id == destino:
+
+				return i
+		return None
+
 
 	def insertAresta(self,a,b,peso):
 		aux = True
@@ -61,7 +74,7 @@ class Graph:
 		aux = self.getVertice(a)
 
 		#print(origem.adj)
-		self.arestas.append(Aresta(origem,adj,peso))
+		self.arestas.append(Aresta(peso,origem,adj))
 
 	def dfs(self,origem):
 		pilha = deque()
@@ -127,7 +140,6 @@ class Graph:
 		fila.append(aux)
 		#for k in vertices:
 			#fila.append(k)
-		print(origem)
 		while(len(fila)>0):
 			atual = fila.popleft()
 			self.getVertice(atual.id).cor = 'c'
@@ -154,7 +166,7 @@ class Graph:
 
 			for k in self.getVertices():
 				matrix[i.id][k.id] = k.nivel
-			print(matrix)
+	
 				
 		print(matrix)
 
@@ -222,7 +234,6 @@ class Graph:
 		for i in range(len(self.vertices)):
 			self.countCicles(i, i, cycles, copy.copy(pilha), copy.copy(visited), punish)
 			punish[i] = 0
-			print(i, cycles)
 
 		#self.countCicles(2, 2, cycles, copy.copy(pilha), copy.copy(visited), punish)
 		#print(2, cycles)
@@ -232,7 +243,50 @@ class Graph:
 		for i in cycles:
 			if i > 0:
 				c += i
-
+		if(self.derecionado == False):
+			print(c-len(self.arestas))
 		print(c)	
 		#print(self.dfsCiclo(pilha,numciclo))
+
+
+
+	def dijkstra(self, origem, destino):
+		vertices = []
+		for i in self.getVertices():
+			aux = self.getVertice(i.id)
+			aux.value = float("inf")
+		self.getVertice(origem).value = 0
+
+		hp.heapify(vertices)
+		hp.heappush(vertices,origem)
+		while(len(vertices)>0):
+			aux = hp.heappop(vertices)
+			for i in self.getVertice(aux).adj:
+				hp.heappush(vertices,i.id)
+				og = self.getVertice(aux)
+				peso = self.getAresta(aux,i.id).peso
 				
+				if og.value+peso < i.value:
+					auxOg = self.getVertice(i.id)
+				
+					auxOg.value = og.value+peso
+					auxOg.prev = og.id
+		caminho = destino
+		lista = []
+
+		while(caminho != origem):
+			if(caminho is None):
+				break
+			lista.append(caminho)
+			caminho = self.getVertice(caminho).prev
+		lista.append(caminho)
+		lista.reverse()
+		print("O menor caminho de", origem, "ateh" ,destino,"eh:",origem,lista )	
+
+
+
+
+
+
+
+
