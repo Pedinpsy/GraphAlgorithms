@@ -243,7 +243,7 @@ class Graph:
 		for i in cycles:
 			if i > 0:
 				c += i
-		if(self.derecionado == False):
+		if(self.direcionado == False):
 			print(c-len(self.arestas))
 		print(c)	
 		#print(self.dfsCiclo(pilha,numciclo))
